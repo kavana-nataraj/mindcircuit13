@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage(‘clone’ SCM) {
+            steps {
+                echo ‘cloning mc-app project code '
+               git branch: 'main', url: 'https://github.com/kavana-nataraj/mindcircuit13.git'
+            }
+        }
+    }
+}
+stages {
+        stage(‘build artefacts) {
+            steps {
+                echo ‘generating artefacts by maven build tool’
+                 sh 'mvn clean install'
+            }
+        }
+    }
+}
+stages {
+        stage(‘deploy to Tomcat) {
+            steps {
+                echo ‘deploying artefact to tomcat’
+                 deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://3.85.43.53:8081/')], contextPath: 'web-app', war: '**/*.war'
+            }
+        }
+    }
+}
