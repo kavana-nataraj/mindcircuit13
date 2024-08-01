@@ -2,28 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage(‘clone’ SCM) {
+        stage('clone from SCM') {
             steps {
-                echo ‘cloning mc-app project code '
-               git branch: 'main', url: 'https://github.com/kavana-nataraj/mindcircuit13.git'
+                echo 'cloning project code'
+                git branch: 'main', url: 'https://github.com/kavana-nataraj/mindcircuit13.git'
             }
         }
-    }
-}
-stages {
-        stage(‘build artefacts) {
+      stage('build artifacts') {
             steps {
-                echo ‘generating artefacts by maven build tool’
-                 sh 'mvn clean install'
+                echo 'generating artifacts using maven build tool'
+                 sh '''mvn clean install'''
             }
         }
-    }
-}
-stages {
-        stage(‘deploy to Tomcat) {
+       stage('deploy to tomcat') {
             steps {
-                echo ‘deploying artefact to tomcat’
-                 deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://3.85.43.53:8081/')], contextPath: 'web-app', war: '**/*.war'
+                echo 'deploying artefact to app server'
+                 deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://ec2-35-173-244-127.compute-1.amazonaws.com:8081/')], contextPath: 'fb-app', war: '**/*.war'
             }
         }
     }
